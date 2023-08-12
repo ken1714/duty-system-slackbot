@@ -109,7 +109,6 @@ def add_user(ack, respond, command):
 @app.command("/echo")
 def show_duty_info(ack, respond):
     ack()
-    echo_str = ""
     with open(JSON_PATH, mode="r") as json_file:
         duty_info = json.load(json_file)
         respond(generate_duty_info_str(duty_info))
