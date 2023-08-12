@@ -8,6 +8,8 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
 JSON_PATH = os.path.join("data", "data.json")
 SCHEDULED_DATE_FORMAT = "%Y/%m/%d"
+LATEST_USERLIST_DATETIME = datetime.now()
+USER_LIST = None
 
 
 def generate_duty_info_str(duty_info):
@@ -78,14 +80,20 @@ def add_user(ack, respond, command):
     ack()
     add_users = command["text"].split(' ')
     add_users = [add_user[1:] for add_user in add_users if add_user.startswith("@")]
-    user_list = app.client.users_list()
+
+    now_datetime = datetime.now()
+    global LATEST_USERLIST_DATETIME
+    global USER_LIST
+    if (now_datetime - LATEST_USERLIST_DATETIME).days >= 1 or USER_LIST is None:
+        USER_LIST = app.client.users_list()
+        LATEST_USERLIST_DATETIME = now_datetime
 
     # TODO: implement remove function
     duty_info = dict()
     added_user_ids = list()
     with open(JSON_PATH, mode="w") as json_file:
         for add_user_name in add_users:
-            for user in user_list["members"]:
+            for user in USER_LIST["members"]:
                 user_name = user.get("name", "")
                 if add_user_name == user_name:
                     user_id = user.get("id", None)
@@ -110,7 +118,7 @@ def show_duty_info(ack, respond):
 if __name__ == "__main__":
     if not os.path.exists(JSON_PATH):
         with open(JSON_PATH, mode="w") as json_file:
-            json.dump(dict(), json_file)   
+            json.dump(dict(), json_file)
     try:
         SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
     except KeyboardInterrupt:
