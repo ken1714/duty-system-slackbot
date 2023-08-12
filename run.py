@@ -6,7 +6,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
-JSON_PATH = os.path.join("data", "data.json")
+JSON_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data", "data.json")
 SCHEDULED_DATE_FORMAT = "%Y/%m/%d"
 LATEST_USERLIST_DATETIME = datetime.now()
 USER_LIST = None
