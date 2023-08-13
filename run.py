@@ -111,7 +111,10 @@ def show_duty_info(ack, respond):
     ack()
     with open(JSON_PATH, mode="r") as json_file:
         duty_info = json.load(json_file)
-        respond(generate_duty_info_str(duty_info))
+        if len(duty_info) > 0:
+            respond(generate_duty_info_str(duty_info))
+        else:
+            respond("議事録当番は設定されていません。")
 
 
 if __name__ == "__main__":
