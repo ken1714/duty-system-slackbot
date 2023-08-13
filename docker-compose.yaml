@@ -1,0 +1,15 @@
+version: '3'
+services:
+  slackbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: duty-system
+    container_name: duty-system
+    tty: true
+    environment:
+      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN}
+      SLACK_APP_TOKEN: ${SLACK_APP_TOKEN}
+      TZ: "Asia/Tokyo"
+    volumes:
+      - E:\projects\duty-system-slackbot:/app
